@@ -125,18 +125,18 @@ Azure API Managementでは、レスポンスをキャッシュするよう設定
 
 ![](Images/APIMTraceNV2.png)
 
-- Go to the URL specified in the HTTP Response - [ocp-apim-trace-location]
-  - Note that the [timeheader] field has been sent to the backend API
+- HTTPレスポンスで指定されたURL [ocp-apim-trace-location] に移動します。
+  - [timeheader] フィールドがバックエンドAPIに送信されていることに注目してください。
 
 ![](Images/APIMTraceNV3.png)
 
-#### Delete response headers
+#### レスポンス・ヘッダーの削除
 
-Frequent requirement is to remove headers - example those that might leak potential security information
+ヘッダーの削除もよくある要件です。例えば、潜在的なセキュリティ情報が漏洩する可能性のあるヘッダの削除などです。
 
-- Open the Calculator API 'Code View'
-- Add the outbound policy to delete the response headers
-- Invoke the API and examine the response
+- Calculator APIの'Code View'を開く
+- レスポンス・ヘッダーを削除するアウトバウンド・ポリシーを追加する
+- APIを呼び出しレスポンスを確認する
 
 ```xml
 <!-- Outbound -->
@@ -144,21 +144,21 @@ Frequent requirement is to remove headers - example those that might leak potent
 <set-header name="x-powered-by" exists-action="delete" />
 ```
 
-Before:
+ポリシー設定前:
 ![](Images/APIMResponseDeleteHeaders.png)
 
-After policy applied:
+ポリシー設定後:
 ![](Images/APIMResponseDeleteHeaders2.png)
 
-#### Amend what's passed to the backend
+#### バックエンドに渡された内容を変更する
 
-Policy expressions can include C# code. Can access a number of .NET Framework types and their members .NET Framework type.  A variable named `context` is implicitly available and its members provide information pertinent to the API request.
+ポリシー式にはC#のコードを含めることができｌ数多くの.NET Frameworkの型やそのメンバーにアクセスできます。`context`という名前の変数を暗黙のうちに利用できます。そのメンバーはAPIリクエストに関連する情報を提供します。
 
-More info <https://docs.microsoft.com/en-us/azure/api-management/api-management-policy-expressions>
+詳細は <https://docs.microsoft.com/en-us/azure/api-management/api-management-policy-expressions> を参照ください。
 
-- Open the Calculator API 'Code View'
-- Add the inbound policy to amend the query string and header
-- Invoke the API - use the Trace function to examine what was passed to backend
+- Calculator APIの'Code View'を開く
+- クエリ文字列とヘッダーを変更するインバウンド・ポリシーを追加する
+- APIを呼び出し、Trace関数を使って何がバックエンドに渡されたかを確認する
 
 ```xml
 <!-- Inbound -->
@@ -171,20 +171,20 @@ More info <https://docs.microsoft.com/en-us/azure/api-management/api-management-
 </set-header>
 ```
 
-Note - this trace below was from the Developer portal.  I got errors when testing from the Azure Management portal, as the [User Id] is unable to be evaluated.
+注意：以下のトレースは開発者ポータルから取得したものです。Azure管理ポータルからテストした場合には[User Id]を評価できないためにエラーが発生しました。
 
 ![](Images/APIMTraceAmendBackend.png)
 
-#### Transformation - conditional
+#### 条件に依存した変換
 
-Another C# example to manipulate the response body, depending on the product - with this expression a subscriber of the Starter product will only get back a subset of the information.  Other products will get the full information.
+製品によってレスポンス・ボディを操作する別のC#の例は、この式を使ってStarter製品のサブスクライバーの場合は情報のサブセットのみを取得し、他の製品の場合は、完全な情報を取得します。
 
-- Open the Star Wars API | GetPeopleById operation 'Code View'
-- Add the outbound policy to conditionally change the response body
-- Invoke the API using the Starter product key and examine the response
-- Invoke the API using the Unlimited product key and examine the response
+- Star Wars APIのGetPeopleById オペレーションで 'Code View' エディターを開く
+- 条件付きでレスポンス・ボディを変更するアウトバウンド・ポリシーを追加する
+- Starter製品のキーを使ってAPIを呼び出し、レスポンスを確認する
+- Unlimited製品のキーを使ってAPIを呼び出し、レスポンスを確認する
 
-Not the inbound header is set to ensure that the Response Body is not encoded as that causes the JSON parsing to fail.
+注意：レスポンス・ボディがエンコードされずJSONのパースに失敗しないよう、インバウンドヘッダを設定してください。
 
 ```xml
 <!-- Inbound -->
@@ -207,11 +207,11 @@ Not the inbound header is set to ensure that the Response Body is not encoded as
 
 ```
 
-With Starter key:
+Starterの場合
 
 ![](Images/APIMResponseCondStarter.png)
 
-With Unlimited key:
+Unlimitedの場合
 
 ![](Images/APIMResponseCondUnlimited.png)
 
