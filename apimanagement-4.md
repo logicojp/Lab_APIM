@@ -10,13 +10,13 @@
 - [Part 7 - セキュリティ](apimanagement-7.md)
 - [Part 8 - DevOps](apimanagement-8.md)
 
-#### Caching
+#### キャッシュ
 
-API Management can be configured for response caching - this can significantly reduce API latency, bandwidth consumption, and web service load for data that does not change frequently.
+Azure API Managementでは、レスポンスをキャッシュするよう設定できます。これにより、頻繁に変更されないデータのAPI待ち時間、帯域幅の消費、およびWebサービスの負荷を大幅に削減できます。
 
-- Using the original Azure Management portal - set a caching Policy on the RandomColor API call
-  - Set a caching duraction of 15 seconds
-  - Simple caching configuration is not yet implemented in the Azure Management portal - we see shall see later how it can be done using policy expressions
+- Azure管理ポータルを使い、キャッシュポリシーをRandomColor APIに対して設定します。
+  - キャッシュに保持する期間は15秒
+  - Azure管理ポータルではシンプルなキャッシュの構成が未実装です。ポリシー式を使って実装する方法を後ほどご紹介します。
 
 ![](Images/APIMEnableCaching.png)
 
@@ -24,40 +24,40 @@ API Management can be configured for response caching - this can significantly r
 
 ![](Images/APIMEnableCaching3.png)
 
-- Configure Color Website to use Unlimited URL
-- Select [Start]
-- Notice that for each 15 seconds period - the same color is set
+- Color WebsiteをUnlimited URLを使うように構成
+- [Start] を選択
+- 各15秒間で同じ色が設定されていることに注意してください。
 
 ![](Images/APIMColorWebCaching.png)
 
-## Policy Expressions
+## ポリシー式
 
-Policy Expressions are used to control traffic to and modify the behavior of the Backend API. Using C# statements and an ability to access the API context, as well as your API Management service configuration, Policy Expressions are a powerful way to modify the behavior of the API at runtime.
+ポリシー式を使ってトラフィックを制御したりバックエンドAPIの振る舞いを変更したりします。C#のステートメントとAPIコンテキストやAPI Managementサービス公正へのアクセス機能を使って実行時にAPIの振る舞いを変更することができるため、ポリシー式は強力な手段です。
 
-<https://docs.microsoft.com/en-us/azure/api-management/api-management-policies>
+<https://docs.microsoft.com/azure/api-management/api-management-policies>
 
-We had a brief look earlier at setting CORS policies and caching.  Lets dive in a bit deeper.
+先ほど、CORS ポリシーとキャッシングの設定について簡単に説明しました。もう少し深く掘り下げてみましょう。
 
-### Configuration
+### 構成
 
-- Select an API e.g. Color API
-- Notice you can configure the Frontend, Inbound processing, Outbound processing, Backend
-  - Just select the Pencil icon to edit
-- Also notice, the configuration can be scoped to the API or an individual Operation
+- APIを選択（例：Color API）
+- フロントエンド、インバウンド処理、アウトバウンド処理、バックエンドの設定ができることに着目してください。
+  - 鉛筆アイコンを選択するだけで編集できます
+- また、設定をAPIや個々のオペレーションに範囲を絞ることができる点にも着目してください。
 
 ![](Images/APIMPolicyEditor.png)
 
-- Edit the Frontend ...
-  - If editing an Operation - this gives a choice of the 'Code View' editor or Forms-based editor
-  - If editing an API - the only option is the 'Code View' editor
-  - The 'Code View' editor allows amendments to the Swagger (OpenAPI) definition
+- フロントエンドを編集する
+  - Operationを編集する場合、'Code View' エディターもしくはフォームベースのエディターを選択できます。
+  - If editing an APIを編集する場合、'Code View' エディターのみが選択できます。
+  - 'Code View' エディターではSwagger (OpenAPI) 定義の修正が可能です。
 
 ![](Images/APIMFrontendCodeEditor.png)
 
 ![](Images/APIMFrontendFormEditor.png)
 
-- Edit Inbound processing / Outbound processong / Backend
-  - Have a choice of the 'Code View' editor or selecting an [Add Policy] Form
+- インバウンド処理 / アウトバウンド処理 / バックエンド
+  - 'Code View'エディターもしくは [Add Policy] フォームを選択できます。
 
 ![](Images/APIMInboundProcessing.png)
 
@@ -65,13 +65,13 @@ We had a brief look earlier at setting CORS policies and caching.  Lets dive in 
 
 ![](Images/APIMInboundFormEditor.png)
 
-### Examples
+### 例
 
-#### HTTP Response Caching
+#### HTTPレスポンスのキャッシュ
 
-- Look at RandomColor API
-- Switch to 'Code View'
-  - See the caching policies (set from earlier)
+- RandomColor API
+- 'Code View' に切り替え
+  - （設定済みの）キャッシングポリシーを参照してください。
 
 ```xml
 <!-- Inbound -->
@@ -83,14 +83,14 @@ We had a brief look earlier at setting CORS policies and caching.  Lets dive in 
 <cache-store duration="15" />
 ```
 
-#### Transformation - XML to JSON
+#### XMLからJSONへの変換
 
-Frequent requirement is to transform content
+よくある要件としてコンテンツの変換があります。
 
-- Remember the Calc API ... this returned XML
-- Open the Calculator API 'Code View'
-- Add the outbound policy to transform response body to JSON
-- Invoke the API and examine the response - note that its now JSON
+- Calc API を覚えていますか... これは XML を返しました。
+- Calculator APIの'Code View'を開いて
+- レスポンスボディをJSONに変換するためのアウトバウンドポリシーを追加します
+- APIを呼び出しレスポンスをチェックし、レスポンスがJSONになっていることを確認しましょう。
 
 ```xml
 <!-- Outbound -->
@@ -99,20 +99,20 @@ Frequent requirement is to transform content
 
 ![](Images/APIMResponseXMLtoJSON.png)
 
-#### Named Values collection
+#### プロパティ・コレクション
 
-Named Values (aka Properties) are a collection of key/value pairs that are global to the service instance. These properties can be used to manage constant string values across all API configuration and policies.  Values can be expressions or secrets (never displayed).
+プロパティは、サービス インスタンスに対してグローバルなKey-Vauleコレクションです。これらのプロパティを使って全てのAPI構成やポリシー間にわたる固定文字列を管理できます。値は式やシークレット（表示されません）を取り得ます。
 
-- Set a property called `TimeNow`
-  - e.g. `@(DateTime.Now.ToString())`
+- `TimeNow`というプロパティを設定
+  - 例：`@(DateTime.Now.ToString())`
 
 ![](Images/APIMNamedValues.png)
 
-- Open the Calculator API 'Code View'
-- Add the inbound policy to add the header
-- Test the API within the Azure Management portal
-  - Add a Header called [Ocp-Apim-Trace] set to true
-  - Examine the response and the [Trace] tab
+- Calculator APIの'Code View'を開く
+- インバウンドポリシーをHeaderに追加
+- Azure管理ポータル内でAPIをテスト
+  - [Ocp-Apim-Trace]というヘッダーを追加し、値としてtrueを設定
+  - レスポンスや[Trace]タブをチェック
 
 ```xml
 <!-- Inbound -->
